@@ -20,9 +20,9 @@ class BonController extends Controller
      }
      
     public function index()
-    {   $bons= new Bon ;
+    {
         $bons = Bon::all();
-        return view('acceuil',compact('bons')); // Assurez-vous que la vue existe
+        return view('acceuil',compact('bons')); 
     }
 
     
@@ -61,6 +61,52 @@ public function store(Request $request)
     return redirect()->route('bons.index')->with('success', 'Bon ajouté avec succès.');
 }
 
+public function edit($id)
+{
+    $bon = Bon::findOrFail($id);
 
+    return view('bons.edit', [
+        'bon' => $bon,
+        'sites' => Site::all(),
+        'services' => Service::all(),
+        'vehicules' => Vehicule::all(),
+        'preneurs' => Preneur::all()
+    ]);
+}
+
+
+public function update(Request $request, $id)
+{
+    $bon = Bon::findOrFail($id);
+
+    $validated = $request->validate([
+        'n_bon' => 'required|string|max:255|unique:bons,n_bon,' . $bon->id,
+        'type_carburant' => 'required|string',
+        'site_id' => 'required|exists:sites,id',
+        'service_id' => 'required|exists:services,id',
+        'vehicule_id' => 'required|exists:vehicules,id',
+        'preneur_id' => 'required|exists:preneurs,id',
+        'quantite' => 'required|integer|min:1',
+        'prix' => 'required|numeric|min:0',
+        'date_bon' => 'required|date',
+        'date_saisie' => 'required|date',
+    ]);
+
+    // Calcul du total
+    $validated['total'] = $validated['quantite'] * $validated['prix'];
+    $validated['utilisateur_id'] = auth()->id();
+
+    $bon->update($validated);
+
+    return redirect()->route('bons.index')->with('success', 'Bon mis à jour avec succès.');
+}   
+
+public function destroy($id)
+{
+    $bon = Bon::findOrFail($id);
+    $bon->delete();
+    return redirect()->route('bons.index')->with('success', 'Bon supprimé avec succès.');
+}
 
 }
+

@@ -19,7 +19,9 @@
         <th>Preneur</th>
         <th>Date Bon</th>
         <th>Date Saisie</th>
-        <th>Actions</th> {{-- <-- nouvelle colonne --}}
+        @if(auth()->user()->role === 'admin')
+            <th>Action</th>
+        @endif
     </tr>
 </thead>
 <tbody>
@@ -37,7 +39,9 @@
             <td>{{ $bon->date_bon }}</td>
             <td>{{ $bon->date_saisie }}</td>
             <td>
-                <a href="{{ route('bons.edit', $bon->id) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
+                @if(auth()->user()->role === 'admin')
+
+            <a href="{{ route('bons.edit', $bon->id) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
 
                 <form action="{{ route('bons.destroy', $bon->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce bon ?');">
                     @csrf 
@@ -45,6 +49,7 @@
                     <button type="submit" class="btn btn-sm btn-danger">🗑 Supprimer</button>
                 </form>
             </td>
+            @endif
         </tr>
     @endforeach
 </tbody>

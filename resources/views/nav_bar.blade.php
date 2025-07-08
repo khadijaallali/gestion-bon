@@ -5,9 +5,11 @@
 <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom bg-light">
     <!-- Bouton ☰ pour ouvrir le menu latéral -->
     <div class="d-flex align-items-center">
+        @if(auth()->user()->role === 'admin')
         <button class="btn btn-outline-secondary me-5 fs-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
             ☰
         </button>
+        @endif
 
         <!-- Logo + Titre -->
         <a class="navbar-brand fs-3 text-dark" href="{{ url('/bons') }}">
@@ -19,7 +21,7 @@
     <!-- Navigation horizontale -->
     <ul class="nav nav-tabs fs-5">
         <li class="nav-item">
-            <a class="nav-link active text-dark" href="#">Accueil</a>
+            <a class="nav-link active text-dark" href="/bons">Accueil</a>
         </li>
         <li class="nav-item">
             <a class="nav-link text-dark" href="/saisi">Ajouter un bon</a>
@@ -54,6 +56,9 @@
         @endauth
     </div>
 </div>
+
+ @if(auth()->check() && auth()->user()->role === 'admin')
+    <aside class="sidebar">
 
 <!-- Offcanvas Sidebar gauche -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
@@ -115,3 +120,5 @@
 </div>
   </div>
 </div>
+</aside>
+  @endif
