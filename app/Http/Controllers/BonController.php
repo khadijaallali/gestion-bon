@@ -157,6 +157,16 @@ public function resultatParNBon(Request $request)
     return view('recherche.resultatB', compact('bons', 'bon'));
 }
 
+public function print(Request $request)
+{
+    $matricule = $request->input('matricule');
+
+    $bons = Bon::whereHas('preneur', function ($query) use ($matricule) {
+        $query->where('n_matricule', 'like', '%' . $matricule . '%');
+    })->get();
+
+    return view('recherche.print', compact('bons', 'matricule'));
+}
 
 }
 
