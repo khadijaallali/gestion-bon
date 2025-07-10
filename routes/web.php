@@ -16,24 +16,31 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
+Route::get('/profile',[BonController::class,'profile']);
+Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 Route::get('/bons', [BonController::class, 'index']);
 Route::resource('bons', BonController::class);
 Route::get('/saisi', [BonController::class, 'create'])->name('saisi.create');
 Route::post('/saisi', [BonController::class, 'store'])->name('saisi.store');
 
-Route::middleware(['auth', 'admin'])->group(function () {
 Route::resource('sites', SiteController::class);
-Route::resource('srevices', ServiceController::class);
+Route::resource('services', ServiceController::class);
 Route::resource('vehicules', VehiculeController::class);
 Route::resource('preneurs', PreneurController::class);
-});
+
+Route::get('/recherche/matricule', [BonController::class, 'rechercherParMatricule'])->name('recherche.matricule');
+Route::get('/resultat/matricule', [BonController::class, 'resultatParMatricule'])->name('resultatM.matricule');
+
+Route::get('/recherche/vehicule', [BonController::class, 'rechercherParVehicule'])->name('recherche.vehicule');
+Route::get('/resultat/vehicule', [BonController::class, 'resultatParVehicule'])->name('resultatV.vehicule');
+
+Route::get('/recherche/bon', [BonController::class, 'rechercherParNBon'])->name('recherche.bon');
+Route::get('/resultat/bon', [BonController::class, 'resultatParNBon'])->name('resultatB.bon');
+
+
 Route::get('/login', [App\Http\Controllers\AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');

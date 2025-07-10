@@ -37,11 +37,11 @@
         <div class="row mb-3">
             <div class="col">
                 <label for="quantite" class="form-label">Quantité (L)</label>
-                <input type="number" step="0.01" class="form-control" id="quantite" name="quantite" required>
+                <input type="number" step="0.01" class="form-control" id="quantite" name="quantite" min="0"required>
             </div>
             <div class="col">
                 <label for="prix" class="form-label">Prix (Dh)</label>
-                <input type="number" step="0.01" class="form-control" id="prix" name="prix" required>
+                <input type="number" step="0.01" class="form-control" id="prix" name="prix" min="0" required>
             </div>
             <div class="col">
                 <label for="total" class="form-label">Total (Dh)</label>
