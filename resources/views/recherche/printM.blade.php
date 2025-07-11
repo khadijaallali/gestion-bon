@@ -69,7 +69,7 @@
         </table>
     @endif
     <div class="footer mt-4">
-        <p>© 2023 AUTO HALL. Tous droits réservés.</p>  
+        <p>© 2025 AUTO HALL. Tous droits réservés.</p>  
     </div>
 </body>
 </html>
