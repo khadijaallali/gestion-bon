@@ -7,6 +7,7 @@ use App\Http\Controllers\SiteController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\VehiculeController;
 use App\Http\Controllers\PreneurController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('acce');
@@ -21,10 +22,9 @@ Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-Route::get('/bons/impression', [BonController::class, 'printM'])->name('bons.printM');
-Route::get('/bons/print/{id}', [BonController::class, 'print'])->name('recherche.print');
-Route::get('/bons/impression', [BonController::class, 'printV'])->name('bons.printV');
-Route::get('/bons/impression', [BonController::class, 'printB'])->name('bons.printB');
+Route::get('/resultat/impressionM/{matricule}', [BonController::class, 'printM'])->name('bons.printM');
+Route::get('/resultat/impressionV/{vehicule}', [BonController::class, 'printV'])->name('bons.printV');
+Route::get('/resultat/impressionB/{bon}', [BonController::class, 'printB'])->name('bons.printB');
 Route::get('/bons/impression', [BonController::class, 'printT'])->name('bons.printT');
 
 Route::get('/bons', [BonController::class, 'index']);
@@ -36,6 +36,7 @@ Route::resource('sites', SiteController::class);
 Route::resource('services', ServiceController::class);
 Route::resource('vehicules', VehiculeController::class);
 Route::resource('preneurs', PreneurController::class);
+Route::resource('users', UserController::class);
 
 Route::get('/recherche/matricule', [BonController::class, 'rechercherParMatricule'])->name('recherche.matricule');
 Route::get('/resultat/matricule', [BonController::class, 'resultatParMatricule'])->name('resultatM.matricule');

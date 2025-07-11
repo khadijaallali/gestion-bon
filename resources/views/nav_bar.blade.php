@@ -1,6 +1,3 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 
 <!-- Barre de navigation principale -->
 <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom bg-light no-print ">
@@ -36,18 +33,14 @@
                 <li><a class="dropdown-item" href="{{ route('recherche.vehicule') }}">Par N° véhicule</a></li>                <li><a class="dropdown-item" href="{{ route('recherche.bon') }}">Par N° bon</a></li>
             </ul>
         </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" href="#">Imprimer</a>
-        </li>
     </ul>
 
     <!-- Partie profil utilisateur -->
     <div class="d-flex align-items-center">
         @auth
-            <span class="me-3 fw-semibold" >
-                <a href="/profile">
-                {{ Auth::user()->name }} 👤
-            </span>
+                <a href="/profile"  class="me-3 fw-semibold text-decoration-none text-dark">
+                {{ Auth::user()->name }} 👤 
+            </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button class="btn btn-outline-danger btn-sm" type="submit">Se déconnecter</button>
@@ -112,7 +105,16 @@
 
             </ul>
         </li> </h4>
+    <li class="nav-item dropdown">
+            <h4><a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                Utilisateurs
+            </a>
+            <ul class="dropdown-menu fs-5">
+                <li><a class="dropdown-item" href="/users/create"> ➕ Ajouter Utilisateurs</a></li>
+                <li><a class="dropdown-item" href="/users"> 📃 Gérer utilisateurs</a></li>
 
+            </ul>
+        </li> </h4>
     <hr>
     <div class="position-absolute bottom-0 start-0 w-100 p-3 border-top">
     <a href="#" class="text-decoration-none text-dark">

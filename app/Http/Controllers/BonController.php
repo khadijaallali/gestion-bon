@@ -8,6 +8,7 @@ use App\Models\Site;
 use App\Models\Service;
 use App\Models\Vehicule;
 use App\Models\Preneur; 
+use App\Models\User;
 
 
 class BonController extends Controller
@@ -108,7 +109,6 @@ public function destroy($id)
     return redirect()->route('bons.index')->with('success', 'Bon supprimé avec succès.');
 }
 
-// Affiche la page de recherche par matricule
 public function rechercherParMatricule()
 {
     return view('recherche.matricule');
@@ -157,10 +157,8 @@ public function resultatParNBon(Request $request)
     return view('recherche.resultatB', compact('bons', 'bon'));
 }
 
-public function printM(Request $request)
+public function printM($matricule)
 {
-    $matricule = $request->input('matricule');
-
     $bons = Bon::whereHas('preneur', function ($query) use ($matricule) {
         $query->where('n_matricule', 'like', '%' . $matricule . '%');
     })->get();
@@ -168,10 +166,8 @@ public function printM(Request $request)
     return view('recherche.printM', compact('bons', 'matricule'));
 }
 
-public function printV(Request $request)
+public function printV($vehicule)
 {
-    $vehicule = $request->input('vehicule');
-
     $bons = Bon::whereHas('vehicule', function ($query) use ($vehicule) {
         $query->where('n_vehicule', 'like', '%' . $vehicule . '%');
     })->get();
@@ -179,14 +175,13 @@ public function printV(Request $request)
     return view('recherche.printV', compact('bons', 'vehicule'));
 }
 
-public function printB(Request $request)
+public function printB($bon)
 {
-    $bon = $request->input('bon');
-
     $bons = Bon::where('n_bon', 'like', '%' . $bon . '%')->get();
 
     return view('recherche.printB', compact('bons', 'bon'));
 }
+
  public function printT(Request $request)
 {
     $bons = Bon::all();

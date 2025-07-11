@@ -13,7 +13,7 @@
 <div class="container mt-4">
     <h2 class="mb-4 mt-4">Liste des Bons de Carburant</h2>
 
-    <a href="{{ route('bons.printT', ['bons' => $bons]) }}" class="btn btn-secondary mb-3" target="_blank">
+    <a href="{{ route('bons.printT') }}" class="btn btn-secondary mb-3" target="_blank">
         🖨️ Imprimer la liste des bons
     </a>
 

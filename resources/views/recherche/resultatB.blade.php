@@ -26,19 +26,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($bons as $bon)
+                @foreach ($bons as $b)
                     <tr>
-            <td>{{ $bon->n_bon }}</td>
-            <td>{{ $bon->quantite }}</td>
-            <td>{{ $bon->prix }}</td>
-            <td>{{ $bon->total }}</td>
-            <td>{{ $bon->type_carburant }}</td>
-            <td>{{ $bon->site->nom_site ?? '' }}</td>
-            <td>{{ $bon->service->nom_service ?? '' }}</td>
-            <td>{{ $bon->vehicule->n_vehicule ?? '' }}</td>
-            <td>{{ $bon->preneur->nom ?? '' }}</td>
-            <td>{{ $bon->date_bon }}</td>
-            <td>{{ $bon->date_saisie }}</td>
+            <td>{{ $b->n_bon }}</td>
+            <td>{{ $b->quantite }}</td>
+            <td>{{ $b->prix }}</td>
+            <td>{{ $b->total }}</td>
+            <td>{{ $b->type_carburant }}</td>
+            <td>{{ $b->site->nom_site ?? '' }}</td>
+            <td>{{ $b->service->nom_service ?? '' }}</td>
+            <td>{{ $b->vehicule->n_vehicule ?? '' }}</td>
+            <td>{{ $b->preneur->nom ?? '' }}</td>
+            <td>{{ $b->date_bon }}</td>
+            <td>{{ $b->date_saisie }}</td>
                     </tr>
                 @endforeach
             </tbody>
