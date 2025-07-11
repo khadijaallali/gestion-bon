@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <h4>Résultats pour : <strong>{{ $matricule }}</strong></h4>
 
-    <a href="{{ route('bons.print', ['matricule' => $matricule]) }}" class="btn btn-secondary" target="_blank">
+    <a href="{{ route('bons.printM', ['matricule' => $matricule]) }}" class="btn btn-secondary" target="_blank">
         🖨️ Imprimer les résultats
     </a>
 

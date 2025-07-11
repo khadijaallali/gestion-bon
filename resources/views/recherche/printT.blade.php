@@ -5,36 +5,17 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        @media print {
-            .no-print {
-                display: none;
-            }
-        }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            padding: 30px;
-        }
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #000;
-            margin-bottom: 30px;
-        }
-        .header h2 {
-            margin-bottom: 5px;
-        }
-        .contact {
-            font-size: 14px;
-            color: #555;
-        }
-        .table th, .table td {
-            text-align: center;
-            vertical-align: middle;
-        }
-    </style>
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
-    <div class="header">
+    <div class="header text-center mb-5 mt-4 ">
         <h2><strong>AUTO HALL</strong></h2>
         <div class="contact">
             Adresse : Zone Industrielle, Casablanca – Maroc <br>
@@ -42,11 +23,12 @@
         </div>
     </div>
 
-    <h5>Liste des bons : <strong>{{ $matricule }}</strong></h5>
+    <h5> Liste des bons :</h5>
 
-     <div class=" d-flex justify-content-end mt-2 no-print">
-        <button onclick="window.print()" class="btn btn-primary">Imprimer</button>
-        <a href="{{ route('bons.index') }}" class="btn btn-secondary">Retour</a>
+
+    <div class="d-flex justify-content-end mt-4 no-print">
+        <button onclick="window.print()" class="btn btn-primary no-print ">Imprimer</button>
+        <a href="{{ route('bons.index') }}" class="btn btn-secondary no-print">Retour</a>
     </div>
 
     @if ($bons->isEmpty())
@@ -55,7 +37,7 @@
         <table class="table table-bordered mt-4">
             <thead class="table-light">
                 <tr>
-                                        <th>N° Bon</th>
+        <th>N° Bon</th>
         <th>Quantité</th>
         <th>Prix</th>
         <th>Total</th>
@@ -87,7 +69,8 @@
             </tbody>
         </table>
     @endif
-
-
+    <div class="footer mt-4">
+        <p>© 2023 AUTO HALL. Tous droits réservés.</p>  
+    </div>
 </body>
 </html>

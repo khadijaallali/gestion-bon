@@ -4,18 +4,18 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
     @media print {
-        .no-print {
-            display: none;
-        }
-    }
+  .no-print {
+    display: none !important;
+  }
+}
 </style>
 
 <div class="container mt-4">
     <h2 class="mb-4 mt-4">Liste des Bons de Carburant</h2>
 
-    <div class=" d-flex justify-content-end mb-3 no-print">
-        <button onclick="window.print()" class="btn btn-primary"> 🖨️ Imprimer la liste</button>
-    </div>
+    <a href="{{ route('bons.printT', ['bons' => $bons]) }}" class="btn btn-secondary mb-3" target="_blank">
+        🖨️ Imprimer la liste des bons
+    </a>
 
     <table class="table table-striped table-hover table-bordered ">
         <thead class="table-secondary">
@@ -32,7 +32,7 @@
                 <th>Date Bon</th>
                 <th>Date Saisie</th>
                 @if(auth()->user()->role === 'admin')
-                <th>Action</th>
+                <th class="no-print">Action</th>
                 @endif
             </tr>
         </thead>
@@ -51,13 +51,14 @@
                     <td>{{ $bon->date_bon }}</td>
                     <td>{{ $bon->date_saisie }}</td>
                     @if(auth()->user()->role === 'admin')
-                    <td>
-                        <a href="{{ route('bons.edit', $bon->id) }}" class="btn btn-sm btn-warning">✏️ Modifier</a>
+                    <td> 
+
+                        <a href="{{ route('bons.edit', $bon->id) }}" class="btn btn-sm btn-warning no-print ">✏️ Modifier</a>
 
                         <form action="{{ route('bons.destroy', $bon->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce bon ?');">
                             @csrf 
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger">🗑 Supprimer</button>
+                            <button type="submit" class="btn btn-sm btn-danger no-print ">🗑 Supprimer</button>
                         </form>
                     </td>
                     @endif
@@ -66,4 +67,5 @@
         </tbody>
     </table>
 </div>
+
 @endsection

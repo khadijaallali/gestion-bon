@@ -3,7 +3,9 @@
 @section('content')
 <div class="container mt-4">
     <h4>Résultats pour : <strong>{{ $bon }}</strong></h4>
-
+    <a href="{{ route('bons.printB', ['bon' => $bon]) }}" class="btn btn-secondary" target="_blank">
+        🖨️ Imprimer les résultats
+    </a>    
     @if ($bons->isEmpty())
         <div class="alert alert-warning mt-3">Aucun bon trouvé pour ce numéro .</div>
     @else

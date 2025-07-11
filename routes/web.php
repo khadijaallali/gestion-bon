@@ -21,8 +21,11 @@ Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-Route::get('/bons/impression', [BonController::class, 'print'])->name('bons.print');
+Route::get('/bons/impression', [BonController::class, 'printM'])->name('bons.printM');
 Route::get('/bons/print/{id}', [BonController::class, 'print'])->name('recherche.print');
+Route::get('/bons/impression', [BonController::class, 'printV'])->name('bons.printV');
+Route::get('/bons/impression', [BonController::class, 'printB'])->name('bons.printB');
+Route::get('/bons/impression', [BonController::class, 'printT'])->name('bons.printT');
 
 Route::get('/bons', [BonController::class, 'index']);
 Route::resource('bons', BonController::class);

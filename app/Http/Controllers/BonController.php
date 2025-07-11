@@ -157,7 +157,7 @@ public function resultatParNBon(Request $request)
     return view('recherche.resultatB', compact('bons', 'bon'));
 }
 
-public function print(Request $request)
+public function printM(Request $request)
 {
     $matricule = $request->input('matricule');
 
@@ -165,8 +165,35 @@ public function print(Request $request)
         $query->where('n_matricule', 'like', '%' . $matricule . '%');
     })->get();
 
-    return view('recherche.print', compact('bons', 'matricule'));
+    return view('recherche.printM', compact('bons', 'matricule'));
+}
+
+public function printV(Request $request)
+{
+    $vehicule = $request->input('vehicule');
+
+    $bons = Bon::whereHas('vehicule', function ($query) use ($vehicule) {
+        $query->where('n_vehicule', 'like', '%' . $vehicule . '%');
+    })->get();
+
+    return view('recherche.printV', compact('bons', 'vehicule'));
+}
+
+public function printB(Request $request)
+{
+    $bon = $request->input('bon');
+
+    $bons = Bon::where('n_bon', 'like', '%' . $bon . '%')->get();
+
+    return view('recherche.printB', compact('bons', 'bon'));
+}
+ public function printT(Request $request)
+{
+    $bons = Bon::all();
+
+    return view('recherche.printT', compact('bons'));
 }
 
 }
+
 

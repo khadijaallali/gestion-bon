@@ -3,11 +3,11 @@
 
 
 <!-- Barre de navigation principale -->
-<div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom bg-light">
+<div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom bg-light no-print ">
     <!-- Bouton ☰ pour ouvrir le menu latéral -->
     <div class="d-flex align-items-center">
         @if(auth()->user()->role === 'admin')
-        <button class="btn btn-outline-secondary me-5 fs-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
+        <button class="btn btn-outline-secondary me-5 fs-4 no-print" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
             ☰
         </button>
         @endif
