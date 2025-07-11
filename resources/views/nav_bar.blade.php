@@ -117,7 +117,7 @@
         </li> </h4>
     <hr>
     <div class="position-absolute bottom-0 start-0 w-100 p-3 border-top">
-    <a href="#" class="text-decoration-none text-dark">
+    <a href="/support" class="text-decoration-none text-dark">
         <h6 class="mb-0">🛠️ Aide et support</h6>
     </a>
 </div>

@@ -47,6 +47,9 @@ Route::get('/resultat/vehicule', [BonController::class, 'resultatParVehicule'])-
 Route::get('/recherche/bon', [BonController::class, 'rechercherParNBon'])->name('recherche.bon');
 Route::get('/resultat/bon', [BonController::class, 'resultatParNBon'])->name('resultatB.bon');
 
+Route::get('/support', function () {
+    return view('support');
+})->name('support');
 
 Route::get('/login', [App\Http\Controllers\AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login.post');
