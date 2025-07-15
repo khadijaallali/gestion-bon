@@ -28,7 +28,7 @@
                 <label for="type_carburant" class="form-label">Type Carburant</label>
                 <select class="form-select" name="type_carburant" required>
                     <option value="">-- Choisir --</option>
-                    <option value="Gasoil">Gasoil</option>
+                    <option value="Diesel">Diesel</option>
                     <option value="Essence">Essence</option>
                 </select>
             </div>

@@ -27,6 +27,21 @@ Route::get('/resultat/impressionV/{vehicule}', [BonController::class, 'printV'])
 Route::get('/resultat/impressionB/{bon}', [BonController::class, 'printB'])->name('bons.printB');
 Route::get('/bons/impression', [BonController::class, 'printT'])->name('bons.printT');
 
+Route::get('/impression/par-site', [BonController::class, 'filtrerParSite'])->name('impression.site');
+Route::post('/impression/par-site', [BonController::class, 'resultatParSite'])->name('impression.site.result');
+
+Route::get('/impression/par-service', [BonController::class, 'filtrerParService'])->name('impression.service');
+Route::post('/impression/par-service', [BonController::class, 'resultatParService'])->name('impression.service.result');
+
+Route::get('/impression/filtrer-bon', [BonController::class, 'filtrerParbon'])->name('impression.bon');
+Route::post('/impression/saisie-periode', [BonController::class, 'saisirParPeriode'])->name('impression.bon.result');
+
+Route::get('/impression/filtrer-preneur', [BonController::class, 'filtrerParpreneur'])->name('impression.preneur');
+Route::post('/impression/resultats-preneurs', [BonController::class, 'ResultatParPreneur'])->name('impression.preneurs.results');
+
+Route::get('/impression/filtrer-vehicules', [BonController::class, 'filtrerParVehicule'])->name('impression.vehicule');
+Route::post('/impression/resultats-vehicules', [BonController::class, 'TablePrintVehicule'])->name('impression.vehicules.result');
+
 Route::get('/bons', [BonController::class, 'index']);
 Route::resource('bons', BonController::class);
 Route::get('/saisi', [BonController::class, 'create'])->name('saisi.create');

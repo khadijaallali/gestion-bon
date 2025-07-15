@@ -30,7 +30,7 @@
                 <label for="type_carburant" class="form-label">Type Carburant</label>
                 <select class="form-select" name="type_carburant" required>
                     <option value="">-- Choisir --</option>
-                    <option value="Gasoil" {{ $bon->type_carburant == 'Gasoil' ? 'selected' : '' }}>Gasoil</option>
+                    <option value="Diesel" {{ $bon->type_carburant == 'Diesel' ? 'selected' : '' }}>Diesel</option>
                     <option value="Essence" {{ $bon->type_carburant == 'Essence' ? 'selected' : '' }}>Essence</option>
                 </select>
             </div>
