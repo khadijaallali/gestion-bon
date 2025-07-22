@@ -15,11 +15,9 @@
         <p class="text-center">Période : {{ $date_debut }} au {{ $date_fin }}</p>
     @endif
 
-    <div class="text-center no-print">
-        <button onclick="window.print()" class="btn btn-primary mb-3">
-            🖨️ Imprimer le rapport
-        </button>
-    </div>
+    <a href="{{ route('impression.sites.pdf', ['date_debut' => $date_debut, 'date_fin' => $date_fin]) }}" class="btn btn-primary text-center mb-3 my-2" target="_blank">
+    🖨️ Imprimer Le rapport
+</a>
 
     <table class="table table-bordered table-striped">
         <thead class="table-secondary text-center">

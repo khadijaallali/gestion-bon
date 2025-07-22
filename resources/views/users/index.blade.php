@@ -23,6 +23,7 @@
                             <div>
                                 <strong>{{ $user->id }}</strong>- {{ $user->name }} - {{ $user->email }} -{{ $user->role }}
                             </div>
+                            @if(auth()->user()->role === 'admin')
                             <div class="d-flex gap-2">
                                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm">Modifier</a>
                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Confirmer la suppression ?')">
@@ -31,6 +32,7 @@
                                     <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
                                 </form>
                             </div>
+                            @endif
                         </li>
                     @endforeach
                 </ul>

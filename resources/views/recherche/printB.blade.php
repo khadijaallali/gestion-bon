@@ -3,6 +3,7 @@
 <head>
     <title>Impression des Bons</title>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
 @media print {
   .no-print {
@@ -22,7 +23,7 @@
         </div>
     </div>
 
-    <h5>Liste des bons : <strong>{{ $bon }}</strong></h5>
+    <h5>Bon numéro : <strong>{{ $bon }}</strong></h5>
 
     <div class="d-flex justify-content-end mt-4 no-print">
         <button onclick="window.print()" class="btn btn-primary no-print ">Imprimer</button>

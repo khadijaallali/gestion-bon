@@ -12,10 +12,11 @@
 
 <div class="container mt-4">
     <h2 class="mb-4 mt-4">Liste des Bons de Carburant</h2>
+    
+    <a href="{{ route('impression.acceuil.pdf') }}" class="btn btn-secondary text-center mb-3 my-2" target="_blank">
+    🖨️ Imprimer la liste des bons
+</a>
 
-    <a href="{{ route('bons.printT') }}" class="btn btn-secondary mb-3" target="_blank">
-        🖨️ Imprimer la liste des bons
-    </a>
 
     <table class="table table-striped table-hover table-bordered ">
         <thead class="table-secondary">

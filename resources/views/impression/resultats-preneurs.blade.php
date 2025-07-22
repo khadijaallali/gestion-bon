@@ -16,9 +16,10 @@
         <p class="text-center">Période : {{ $date_debut }} au {{ $date_fin }}</p>
     @endif
 
-    <div class="text-center no-print">
-        <button onclick="window.print()" class="btn btn-primary mb-3">🖨️ Imprimer le rapport</button>
-    </div>
+    <a href="{{ route('impression.preneurs.pdf', ['date_debut' => $date_debut, 'date_fin' => $date_fin]) }}" class="btn btn-primary text-center mb-3 my-2" target="_blank">
+    🖨️ Imprimer Le rapport
+</a>
+    
 
     @if(empty($recap))
         <div class="alert alert-warning">Aucun bon trouvé dans cette période.</div>

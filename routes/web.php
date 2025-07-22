@@ -8,6 +8,8 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\VehiculeController;
 use App\Http\Controllers\PreneurController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
+
 
 Route::get('/', function () {
     return view('acce');
@@ -41,6 +43,12 @@ Route::post('/impression/resultats-preneurs', [BonController::class, 'ResultatPa
 
 Route::get('/impression/filtrer-vehicules', [BonController::class, 'filtrerParVehicule'])->name('impression.vehicule');
 Route::post('/impression/resultats-vehicules', [BonController::class, 'TablePrintVehicule'])->name('impression.vehicules.result');
+Route::get('/impression/resultats-vehicules/pdf', [BonController::class, 'exportVehiculePDF'])->name('impression.vehicules.pdf');
+Route::get('/impression/resultats-site/pdf', [BonController::class, 'exportSitePDF'])->name('impression.sites.pdf');
+Route::get('/impression/resultats-service/pdf', [BonController::class, 'exportServicePDF'])->name('impression.services.pdf');
+Route::get('/impression/resultats-preneurs/pdf', [BonController::class, 'exportPreneursPDF'])->name('impression.preneurs.pdf');
+Route::get('/impression/saisie-periode/pdf', [BonController::class, 'exportSaisiePeriodePDF'])->name('impression.saisie-periode.pdf');
+Route::get('/impression/acceuil/pdf', [BonController::class, 'exportAcceuilPDF'])->name('impression.acceuil.pdf');
 
 Route::get('/bons', [BonController::class, 'index']);
 Route::resource('bons', BonController::class);
@@ -65,6 +73,10 @@ Route::get('/resultat/bon', [BonController::class, 'resultatParNBon'])->name('re
 Route::get('/support', function () {
     return view('support');
 })->name('support');
+
+Route::get('/test-dashboard', [DashboardController::class, 'test']);
+Route::get('/export-bons', [BonController::class, 'exportCSV']);
+
 
 Route::get('/login', [App\Http\Controllers\AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login.post');

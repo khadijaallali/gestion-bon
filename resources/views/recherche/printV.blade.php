@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <h5>Liste des bons : <strong>{{ $vehicule }}</strong></h5>
+    <h5>Liste des bons pour numéro de vehicule : <strong>{{ $vehicule }}</strong></h5>
 
     <div class="d-flex justify-content-end mt-4 no-print">
         <button onclick="window.print()" class="btn btn-primary no-print ">Imprimer</button>

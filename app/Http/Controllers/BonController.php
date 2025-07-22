@@ -9,13 +9,23 @@ use App\Models\Service;
 use App\Models\Vehicule;
 use App\Models\Preneur; 
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
+
 
 
 
 class BonController extends Controller
 {
 
-    
+public function testPdf()
+{
+    $pdf = PDF::loadHTML('<h1>Bonjour PDF</h1>');
+    return $pdf->download('test.pdf');
+}
+
+
    public function __construct()
      {
         $this->middleware('auth');
@@ -23,8 +33,18 @@ class BonController extends Controller
      
     public function index()
     {
- $bons = \App\Models\Bon::latest()->get();
-         return view('acceuil',compact('bons')); 
+        $bons = \App\Models\Bon::latest()->with(['vehicule', 'preneur'])->get();
+        return view('acceuil', compact('bons'));
+    }
+
+    public function exportAcceuilPDF(Request $request)
+    {
+        $bons = Bon::latest()->with(['vehicule', 'preneur'])->get();
+        $pdf = PDF::loadView('impression.pdf-acceuil', [
+            'bons' => $bons,
+            'print_mode' => true,
+        ])->setPaper('A4', 'landscape');
+        return $pdf->download('liste_bons.pdf');
     }
 
     
@@ -229,7 +249,6 @@ public function resultatParSite(Request $request)
         }
     }
 
-    // Calcul du montant total par site
     foreach ($recap as &$row) {
         $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
     }
@@ -239,6 +258,51 @@ public function resultatParSite(Request $request)
         'date_debut' => $request->date_debut,
         'date_fin' => $request->date_fin,
     ]);
+}
+
+public function exportSitePDF(Request $request)
+{
+    $query = Bon::query()->with('site');
+    if ($request->filled('date_debut')) {
+        $query->whereDate('date_bon', '>=', $request->date_debut);
+    }
+    if ($request->filled('date_fin')) {
+        $query->whereDate('date_bon', '<=', $request->date_fin);
+    }
+    $bons = $query->get();
+    $recap = [];
+    foreach ($bons as $bon) {
+        $siteId = $bon->site_id;
+        $siteName = $bon->site->nom_site ?? '';
+        $siteCode = $bon->site->code_site ?? '';
+        $type = strtolower($bon->type_carburant);
+        if (!isset($recap[$siteId])) {
+            $recap[$siteId] = [
+                'site' => $siteName,
+                'essence_l' => 0,
+                'diesel_l' => 0,
+                'montant_essence' => 0,
+                'montant_diesel' => 0,
+            ];
+        }
+        if ($type === 'essence') {
+            $recap[$siteId]['essence_l'] += $bon->quantite;
+            $recap[$siteId]['montant_essence'] += $bon->total;
+        } elseif ($type === 'diesel') {
+            $recap[$siteId]['diesel_l'] += $bon->quantite;
+            $recap[$siteId]['montant_diesel'] += $bon->total;
+        }
+    }
+    foreach ($recap as &$row) {
+        $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
+    }
+    $pdf = PDF::loadView('impression.pdf-site', [
+        'recap' => $recap,
+        'date_debut' => $request->date_debut,
+        'date_fin' => $request->date_fin,
+        'print_mode' => true,
+    ])->setPaper('A4', 'landscape');
+    return $pdf->download('rapport_sites.pdf');
 }
 public function filtrerParSite()
 {
@@ -296,6 +360,51 @@ public function resultatParService(Request $request)
     ]);
 }
 
+public function exportServicePDF(Request $request)
+{
+    $query = Bon::query()->with('service');
+    if ($request->filled('date_debut')) {
+        $query->whereDate('date_bon', '>=', $request->date_debut);
+    }
+    if ($request->filled('date_fin')) {
+        $query->whereDate('date_bon', '<=', $request->date_fin);
+    }
+    $bons = $query->get();
+    $recap = [];
+    foreach ($bons as $bon) {
+        $serviceId = $bon->service_id;
+        $serviceName = $bon->service->nom_service ?? '';
+        $type = strtolower(trim($bon->type_carburant));
+        if (!isset($recap[$serviceId])) {
+            $recap[$serviceId] = [
+                'service' => $serviceName,
+                'essence_l' => 0,
+                'diesel_l' => 0,
+                'montant_essence' => 0,
+                'montant_diesel' => 0,
+            ];
+        }
+        if ($type === 'essence') {
+            $recap[$serviceId]['essence_l'] += $bon->quantite;
+            $recap[$serviceId]['montant_essence'] += $bon->total;
+        } elseif ($type === 'diesel') {
+            $recap[$serviceId]['diesel_l'] += $bon->quantite;
+            $recap[$serviceId]['montant_diesel'] += $bon->total;
+        }
+    }
+    foreach ($recap as &$row) {
+        $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
+    }
+    $pdf = PDF::loadView('impression.pdf-service', [
+        'recap' => $recap,
+        'date_debut' => $request->date_debut,
+        'date_fin' => $request->date_fin,
+        'print_mode' => true,
+    ])->setPaper('A4', 'landscape');
+    return $pdf->download('rapport_services.pdf');
+}
+
+
 public function filtrerParService()
 {
     return view('impression.filtrer-service');
@@ -321,6 +430,23 @@ public function saisirParPeriode(Request $request)
         'date_fin' => $date_fin
     ]);
 }
+
+public function exportSaisiePeriodePDF(Request $request)
+{
+    $date_debut = $request->date_debut;
+    $date_fin = $request->date_fin;
+    $bons = Bon::whereBetween('date_bon', [$date_debut, $date_fin])
+        ->with(['site', 'service', 'vehicule', 'preneur'])
+        ->get();
+    $pdf = PDF::loadView('impression.pdf-saisie-periode', [
+        'bons' => $bons,
+        'date_debut' => $date_debut,
+        'date_fin' => $date_fin,
+        'print_mode' => true,
+    ])->setPaper('A4', 'landscape');
+    return $pdf->download('saisie_periode.pdf');
+}
+
 
 public function filtrerParbon()
 {
@@ -392,6 +518,51 @@ public function resultatParPreneur(Request $request)
     ]);
 }
 
+public function exportPreneursPDF(Request $request)
+{
+    $query = Bon::query()->with('preneur');
+    if ($request->filled('date_debut')) {
+        $query->whereDate('date_bon', '>=', $request->date_debut);
+    }
+    if ($request->filled('date_fin')) {
+        $query->whereDate('date_bon', '<=', $request->date_fin);
+    }
+    $bons = $query->get();
+    $recap = [];
+    foreach ($bons as $bon) {
+        $preneurId = $bon->preneur_id;
+        $preneurName = $bon->preneur->nom?? '';
+        $type = strtolower(trim($bon->type_carburant));
+        if (!isset($recap[$preneurId])) {
+            $recap[$preneurId] = [
+                'preneur' => $preneurName,
+                'essence_l' => 0,
+                'diesel_l' => 0,
+                'montant_essence' => 0,
+                'montant_diesel' => 0,
+            ];
+        }
+        if ($type === 'essence') {
+            $recap[$preneurId]['essence_l'] += $bon->quantite;
+            $recap[$preneurId]['montant_essence'] += $bon->total;
+        } elseif ($type === 'diesel') {
+            $recap[$preneurId]['diesel_l'] += $bon->quantite;
+            $recap[$preneurId]['montant_diesel'] += $bon->total;
+        }
+    }
+    foreach ($recap as &$row) {
+        $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
+    }
+    $pdf = PDF::loadView('impression.pdf-preneurs', [
+        'recap' => $recap,
+        'date_debut' => $request->date_debut,
+        'date_fin' => $request->date_fin,
+        'print_mode' => true,
+    ])->setPaper('A4', 'landscape');
+    return $pdf->download('rapport_preneurs.pdf');
+}
+
+
 public function filtrerParpreneur()
 {
     return view('impression.filtrer-preneur');
@@ -449,14 +620,112 @@ public function TablePrintVehicule(Request $request)
         'recap' => $recap,
         'date_debut' => $request->date_debut,
         'date_fin' => $request->date_fin,
+        'print_mode' => false, 
     ]);
 }
+
+
+public function exportVehiculePDF(Request $request)
+{
+    $query = Bon::query()->with(['vehicule', 'preneur']);
+
+    if ($request->filled('date_debut')) {
+        $query->whereDate('date_bon', '>=', $request->date_debut);
+    }
+    if ($request->filled('date_fin')) {
+        $query->whereDate('date_bon', '<=', $request->date_fin);
+    }
+
+    $bons = $query->get();
+
+    $recap = [];
+    foreach ($bons as $bon) {
+        if (!$bon->vehicule || !$bon->preneur) continue;
+
+        $vehicule = $bon->vehicule;
+        $preneur = $bon->preneur;
+
+        $cle = $vehicule->id . '_' . $preneur->id;
+        $type = strtolower(trim($bon->type_carburant));
+
+        if (!isset($recap[$cle])) {
+            $recap[$cle] = [
+                'numero' => $vehicule->n_vehicule ?? '',
+                'marque' => $vehicule->marque ?? '',
+                'modele' => $vehicule->modele ?? '',
+                'preneur' => $preneur->nom ?? 'Inconnu',
+                'essence_l' => 0,
+                'diesel_l' => 0,
+                'montant_essence' => 0,
+                'montant_diesel' => 0,
+            ];
+        }
+
+        if ($type === 'essence') {
+            $recap[$cle]['essence_l'] += $bon->quantite;
+            $recap[$cle]['montant_essence'] += $bon->total;
+        } elseif ($type === 'diesel') {
+            $recap[$cle]['diesel_l'] += $bon->quantite;
+            $recap[$cle]['montant_diesel'] += $bon->total;
+        }
+    }
+
+    foreach ($recap as &$row) {
+        $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
+    }
+
+   $pdf = PDF::loadView('impression.pdf-vehicules', [
+        'recap' => $recap,
+        'date_debut' => $request->date_debut,
+        'date_fin' => $request->date_fin,
+        'print_mode' => true, 
+    ])->setPaper('A4', 'landscape');
+
+    return $pdf->download('rapport_vehicules.pdf');
+}
+
 
 public function filtrerParVehicule()
 {
     return view('impression.filtrer-vehicules');
 }
 
+public function exportCSV()
+{
+    $bons = Bon::all();
+
+    $csvHeader = ['ID', 'Type', 'Quantité', 'Montant', 'Date'];
+    $filename = 'bons_export.csv';
+
+    $handle = fopen('php://temp', 'r+');
+    fputcsv($handle, $csvHeader);
+
+    foreach ($bons as $bon) {
+        fputcsv($handle, [
+            $bon->id,
+            $bon->n_bon,
+            $bon->prix,
+            $bon->total,
+            $bon->type_carburant,
+            $bon->quantite,
+            $bon->site->nom_site,
+            $bon->service->nom_service,
+            $bon->vehicule->n_vehicule,
+            $bon->preneur->nom,
+            $bon->created_at,
+        ]);
+    }
+
+    rewind($handle);
+    $csvContent = stream_get_contents($handle);
+    fclose($handle);
+
+    return Response::make($csvContent, 200, [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => "attachment; filename=\"$filename\"",
+    ]);
+
+}
 }
 
 

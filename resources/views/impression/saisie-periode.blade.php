@@ -10,15 +10,15 @@
         <hr>
     </div>
 
-    <h1 class="mb-3 text-center">Récapitulatif par service</h1>
+    <h1 class="mb-3 text-center">Liste des bons </h1>
 
     @if($date_debut && $date_fin)
         <p class="text-center">Période : {{ $date_debut }} au {{ $date_fin }}</p>
     @endif
 
-    <div class="text-center no-print">
-        <button onclick="window.print()" class="btn btn-primary mb-3 my-5">🖨️ Imprimer le rapport</button>
-    </div>
+    <a href="{{ route('impression.saisie-periode.pdf', ['date_debut' => $date_debut, 'date_fin' => $date_fin]) }}" class="btn btn-primary text-center mb-3 my-2" target="_blank">
+    🖨️ Imprimer Le rapport
+</a>
 
         <table class="table table-bordered">
             <thead class="table-secondary">

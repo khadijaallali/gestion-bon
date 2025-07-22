@@ -22,6 +22,7 @@
                             <div>
                                 <strong>{{ $vehicule->id }}</strong>- {{$vehicule->n_vehicule}} - {{$vehicule->marque }} - {{ $vehicule-> modele}}
                             </div>
+                            @if(auth()->user()->role === 'admin')
                             <div class="d-flex gap-2">
                                 <a href="{{ route('vehicules.edit', $vehicule->id) }}" class="btn btn-warning btn-sm">Modifier</a>
                                 <form action="{{ route('vehicules.destroy', $vehicule->id) }}" method="POST" onsubmit="return confirm('Confirmer la suppression ?')">
@@ -30,6 +31,7 @@
                                     <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
                                 </form>
                             </div>
+                            @endif
                         </li>
                     @endforeach
                 </ul>
