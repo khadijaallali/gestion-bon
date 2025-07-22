@@ -13,7 +13,7 @@
 <div class="container mt-4">
     <h2 class="mb-4 mt-4">Liste des Bons de Carburant</h2>
     
-    <a href="{{ route('impression.acceuil.pdf') }}" class="btn btn-secondary text-center mb-3 my-2" target="_blank">
+    <a href="{{ route('impression.acceuil.pdf') }}" class="btn btn-primary text-center mb-3 my-2" target="_blank">
     🖨️ Imprimer la liste des bons
 </a>
 
