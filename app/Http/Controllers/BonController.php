@@ -319,44 +319,87 @@ public function resultatParService(Request $request)
     if ($request->filled('date_fin')) {
         $query->whereDate('date_bon', '<=', $request->date_fin);
     }
+    
+    // Nouveau filtre par service spécifique
+    if ($request->filled('service_id') && $request->service_id != 'all') {
+        $query->where('service_id', $request->service_id);
+    }
 
     $bons = $query->get();
 
     $recap = [];
-    foreach ($bons as $bon) {
-        $serviceId = $bon->service_id;
-        $serviceName = $bon->service->nom_service ?? '';
-        $serviceCode = $bon->service->code_service ?? '';
-        $type = strtolower(trim($bon->type_carburant));
-
-        if (!isset($recap[$serviceId])) {
+    
+    // Si un service spécifique est sélectionné, calculer seulement pour ce service
+    if ($request->filled('service_id') && $request->service_id != 'all') {
+        $serviceSelectionne = Service::find($request->service_id);
+        
+        if ($serviceSelectionne && $bons->isNotEmpty()) {
+            $serviceId = $serviceSelectionne->id;
             $recap[$serviceId] = [
-                'code_service' => $serviceCode,
-                'nom_service' => $serviceName,
+                'code_service' => $serviceSelectionne->code_service,
+                'nom_service' => $serviceSelectionne->nom_service,
                 'essence_l' => 0,
                 'diesel_l' => 0,
                 'montant_essence' => 0,
                 'montant_diesel' => 0,
             ];
+
+            foreach ($bons as $bon) {
+                $type = strtolower(trim($bon->type_carburant));
+                
+                if ($type === 'essence') {
+                    $recap[$serviceId]['essence_l'] += $bon->quantite;
+                    $recap[$serviceId]['montant_essence'] += $bon->total;
+                } elseif ($type === 'diesel') {
+                    $recap[$serviceId]['diesel_l'] += $bon->quantite;
+                    $recap[$serviceId]['montant_diesel'] += $bon->total;
+                }
+            }
+            
+            $recap[$serviceId]['montant_total'] = $recap[$serviceId]['montant_essence'] + $recap[$serviceId]['montant_diesel'];
+        }
+        
+        $serviceSelectionne = $serviceSelectionne;
+    } else {
+        // Si "Tous les services" est sélectionné, afficher tous les services
+        foreach ($bons as $bon) {
+            $serviceId = $bon->service_id;
+            $serviceName = $bon->service->nom_service ?? '';
+            $serviceCode = $bon->service->code_service ?? '';
+            $type = strtolower(trim($bon->type_carburant));
+
+            if (!isset($recap[$serviceId])) {
+                $recap[$serviceId] = [
+                    'code_service' => $serviceCode,
+                    'nom_service' => $serviceName,
+                    'essence_l' => 0,
+                    'diesel_l' => 0,
+                    'montant_essence' => 0,
+                    'montant_diesel' => 0,
+                ];
+            }
+
+            if ($type === 'essence') {
+                $recap[$serviceId]['essence_l'] += $bon->quantite;
+                $recap[$serviceId]['montant_essence'] += $bon->total;
+            } elseif ($type === 'diesel') {
+                $recap[$serviceId]['diesel_l'] += $bon->quantite;
+                $recap[$serviceId]['montant_diesel'] += $bon->total;
+            }
         }
 
-        if ($type === 'essence') {
-            $recap[$serviceId]['essence_l'] += $bon->quantite;
-            $recap[$serviceId]['montant_essence'] += $bon->total;
-        } elseif ($type === 'diesel') {
-            $recap[$serviceId]['diesel_l'] += $bon->quantite;
-            $recap[$serviceId]['montant_diesel'] += $bon->total;
+        foreach ($recap as &$row) {
+            $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
         }
-    }
-
-    foreach ($recap as &$row) {
-        $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
+        
+        $serviceSelectionne = null;
     }
 
     return view('impression.resultats-service', [
         'recap' => $recap,
         'date_debut' => $request->date_debut,
         'date_fin' => $request->date_fin,
+        'service_selectionne' => $serviceSelectionne,
     ]);
 }
 
@@ -407,7 +450,8 @@ public function exportServicePDF(Request $request)
 
 public function filtrerParService()
 {
-    return view('impression.filtrer-service');
+    $services = Service::orderBy('nom_service')->get();
+    return view('impression.filtrer-service', compact('services'));
 }
 
 public function filtrerParPeriode()
@@ -727,5 +771,3 @@ public function exportCSV()
 
 }
 }
-
-
