@@ -1,35 +1,63 @@
 @extends('layouts.app')
 
-@section('title', 'Liste des utilisateurs ')
+@section('title', 'Liste des utilisateurs')
 
 @section('content')
-<div class="container mt-5">
-    <div class="card shadow rounded">
-        <div class="card-header bg-secondary text-white">
-            <h2 class="mb-0">Liste des utilisateus </h2>
+@include('components.modern-page-style')
+
+<div class="modern-container">
+    <div class="modern-header">
+        <h1 class="modern-title">Gestion des Utilisateurs</h1>
+    </div>
+    
+    <a href="{{ route('users.create') }}" class="btn-add">
+        <i class="fas fa-plus"></i> Ajouter un nouvel utilisateur
+    </a>
+
+    @if (session('success'))
+        <div class="modern-alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            {{ session('success') }}
         </div>
-        <div class="card-body">
+    @endif
 
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-
+    <div class="modern-card">
+        <div class="modern-card-header">
+            <h2 class="modern-card-title">
+                <i class="fas fa-users"></i> Liste des Utilisateurs
+            </h2>
+        </div>
+        <div class="modern-card-body">
             @if($users->isEmpty())
-                <div class="alert alert-warning">Aucun utilisateur trouvé.</div>
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <h3>Aucun utilisateur trouvé</h3>
+                    <p>Commencez par ajouter votre premier utilisateur.</p>
+                </div>
             @else
-                <ul class="list-group">
+                <ul class="modern-list">
                     @foreach($users as $user)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>{{ $user->id }}</strong>- {{ $user->name }} - {{ $user->email }} -{{ $user->role }}
+                        <li class="modern-list-item">
+                            <div class="item-content">
+                                <div class="item-icon">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="item-details">
+                                    <h5>{{ $user->name }}</h5>
+                                    <p>{{ $user->email }} | Rôle: {{ $user->role }} | ID: {{ $user->id }}</p>
+                                </div>
                             </div>
                             @if(auth()->user()->role === 'admin')
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm">Modifier</a>
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Confirmer la suppression ?')">
+                            <div class="action-buttons">
+                                <a href="{{ route('users.edit', $user->id) }}" class="modern-btn btn-edit">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                    <button type="submit" class="modern-btn btn-delete">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
                                 </form>
                             </div>
                             @endif

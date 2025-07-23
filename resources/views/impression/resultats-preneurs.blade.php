@@ -17,8 +17,8 @@
     @endif
 
     <a href="{{ route('impression.preneurs.pdf', ['date_debut' => $date_debut, 'date_fin' => $date_fin]) }}" class="btn btn-primary text-center mb-3 my-2" target="_blank">
-    🖨️ Imprimer Le rapport
-</a>
+    <i class="fas fa-print"></i> Imprimer
+    </a>
     
 
     @if(empty($recap))

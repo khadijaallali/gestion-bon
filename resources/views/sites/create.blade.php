@@ -2,47 +2,76 @@
 
 @section('title', 'Ajouter un site')
 
-@section('styles')
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-@endsection
-
 @section('content')
-<div class="container mt-5">
-    <div class="card shadow rounded">
-        <div class="card-header bg-secondary text-white">
-            <h3 class="mb-0">Ajouter un site</h3>
-        </div>
-        <div class="card-body">
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
+@include('components.modern-form-style')
+
+<div class="modern-form-container">
+    <a href="{{ route('sites.index') }}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Retour à la liste des sites
+    </a>
+    
+    <div class="form-header">
+        <h1 class="form-title">
+            <div class="form-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            Ajouter un Site
+        </h1>
+    </div>
+
+    <div class="modern-form">
+        @if ($errors->any())
+            <div class="modern-alert alert-danger-modern">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>Erreurs de validation :</strong>
+                    <ul>
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
-            @endif
+            </div>
+        @endif
 
-            <form action="{{ route('sites.store') }}" method="POST">
-                @csrf
+        <form action="{{ route('sites.store') }}" method="POST">
+            @csrf
 
-                <div class="mb-3">
-                    <label for="code_site" class="form-label">Code du site :</label>
-                    <input type="text" name="code_site" id="code_site" 
-                           class="form-control" value="{{ old('code_site') }}" required>
-                </div>
+            <div class="form-group">
+                <label for="code_site" class="form-label">
+                    <i class="fas fa-code"></i> Code du site
+                </label>
+                <input type="text" 
+                       name="code_site" 
+                       id="code_site" 
+                       value="{{ old('code_site') }}" 
+                       class="form-control-modern" 
+                       placeholder="Code site"
+                       required>
+            </div>
 
-                <div class="mb-3">
-                    <label for="nom_site" class="form-label">Nom du site :</label>
-                    <input type="text" name="nom_site" id="nom_site" 
-                           class="form-control" value="{{ old('nom_site') }}" required>
-                </div>
+            <div class="form-group">
+                <label for="nom_site" class="form-label">
+                    <i class="fas fa-map-marker-alt"></i> Nom du site
+                </label>
+                <input type="text" 
+                       name="nom_site" 
+                       id="nom_site" 
+                       value="{{ old('nom_site') }}" 
+                       class="form-control-modern" 
+                       placeholder="Nom site"
+                       required>
+            </div>
 
-                <div class="text-end">
-                    <button type="submit" class="btn btn-success">Ajouter</button>
-                </div>
-            </form>
-        </div>
+            <div class="form-buttons">
+                <button type="submit" class="btn-modern btn-primary-modern">
+                    <i class="fas fa-plus"></i> Ajouter le site
+                </button>
+                <a href="{{ route('sites.index') }}" class="btn-modern btn-secondary-modern">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

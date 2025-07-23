@@ -16,7 +16,7 @@
         </div>
 
         <div class="col-md-4 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary">Afficher les résultats</button>
+            <button type="submit" class="btn btn-primary  ">Afficher les résultats</button>
         </div>
     </form>
 </div>

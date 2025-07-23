@@ -432,8 +432,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Toggle password visibility
-    function togglePassword() {
+        function togglePassword() {
         const passwordInput = document.getElementById('password');
         const toggleIcon = document.getElementById('toggleIcon');
         
@@ -447,21 +446,16 @@
             toggleIcon.classList.add('fa-eye');
         }
     }
-
-    // Form submission with loading state
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.classList.add('btn-loading');
         submitBtn.disabled = true;
         
-        // Re-enable button after 5 seconds in case of network issues
         setTimeout(() => {
             submitBtn.classList.remove('btn-loading');
             submitBtn.disabled = false;
         }, 5000);
     });
-
-    // Enhanced form validation
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     
@@ -482,12 +476,10 @@
         }
     });
 
-    // Auto-focus on email field when page loads
     window.addEventListener('load', function() {
         emailInput.focus();
     });
 
-    // Add smooth transitions for form interactions
     document.querySelectorAll('.form-control').forEach(input => {
         input.addEventListener('focus', function() {
             this.parentElement.style.transform = 'translateY(-2px)';

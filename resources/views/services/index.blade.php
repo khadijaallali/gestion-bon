@@ -3,32 +3,61 @@
 @section('title', 'Liste des services')
 
 @section('content')
-<div class="container mt-5">
-    <div class="card shadow rounded">
-        <div class="card-header bg-secondary text-white">
-            <h2 class="mb-0">Liste des services</h2>
-        </div>
-        <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
+@include('components.modern-page-style')
 
+<div class="modern-container">
+    <div class="modern-header">
+        <h1 class="modern-title">Gestion des Services</h1>
+    </div>
+    
+    <a href="{{ route('services.create') }}" class="btn-add">
+        <i class="fas fa-plus"></i> Ajouter un nouveau service
+    </a>
+
+    @if (session('success'))
+        <div class="modern-alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="modern-card">
+        <div class="modern-card-header">
+            <h2 class="modern-card-title">
+                <i class="fas fa-briefcase"></i> Liste des Services
+            </h2>
+        </div>
+        <div class="modern-card-body">
             @if($services->isEmpty())
-                <div class="alert alert-warning">Aucun service trouvé.</div>
+                <div class="empty-state">
+                    <i class="fas fa-briefcase"></i>
+                    <h3>Aucun service trouvé</h3>
+                    <p>Commencez par ajouter votre premier service.</p>
+                </div>
             @else
-                <ul class="list-group">
+                <ul class="modern-list">
                     @foreach($services as $service)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>{{ $service->code_service }}</strong> - {{ $service->nom_service }}
+                        <li class="modern-list-item">
+                            <div class="item-content">
+                                <div class="item-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <div class="item-details">
+                                    <h5>{{ $service->nom_service }}</h5>
+                                    <p>Code: {{ $service->code_service }}</p>
+                                </div>
                             </div>
                             @if(auth()->user()->role === 'admin')
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('services.edit', $service->id) }}" class="btn btn-warning btn-sm">Modifier</a>
-                                <form action="{{ route('services.destroy', $service->id) }}" method="POST" onsubmit="return confirm('Confirmer la suppression ?')">
+                            <div class="action-buttons">
+                                <a href="{{ route('services.edit', $service->id) }}" class="modern-btn btn-edit">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce service ?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                    <button type="submit" class="modern-btn btn-delete">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
                                 </form>
                             </div>
                             @endif

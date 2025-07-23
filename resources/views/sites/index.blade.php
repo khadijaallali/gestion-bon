@@ -3,33 +3,61 @@
 @section('title', 'Liste des sites')
 
 @section('content')
-<div class="container mt-5">
-    <div class="card shadow rounded">
-        <div class="card-header bg-secondary text-white">
-            <h2 class="mb-0">Liste des sites</h2>
+@include('components.modern-page-style')
+
+<div class="modern-container">
+    <div class="modern-header">
+        <h1 class="modern-title">Gestion des Sites</h1>
+    </div>
+    
+    <a href="{{ route('sites.create') }}" class="btn-add">
+        <i class="fas fa-plus"></i> Ajouter un nouveau site
+    </a>
+
+    @if (session('success'))
+        <div class="modern-alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            {{ session('success') }}
         </div>
-        <div class="card-body">
+    @endif
 
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-
+    <div class="modern-card">
+        <div class="modern-card-header">
+            <h2 class="modern-card-title">
+                <i class="fas fa-building"></i> Liste des Sites
+            </h2>
+        </div>
+        <div class="modern-card-body">
             @if($sites->isEmpty())
-                <div class="alert alert-warning">Aucun site trouvé.</div>
+                <div class="empty-state">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Aucun site trouvé</h3>
+                    <p>Commencez par ajouter votre premier site.</p>
+                </div>
             @else
-                <ul class="list-group">
+                <ul class="modern-list">
                     @foreach($sites as $site)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>{{ $site->id }}</strong>- {{ $site->code_site }} - {{ $site->nom_site }}
+                        <li class="modern-list-item">
+                            <div class="item-content">
+                                <div class="item-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="item-details">
+                                    <h5>{{ $site->nom_site }}</h5>
+                                    <p>Code: {{ $site->code_site }} | ID: {{ $site->id }}</p>
+                                </div>
                             </div>
                             @if(auth()->user()->role === 'admin')
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('sites.edit', $site->id) }}" class="btn btn-warning btn-sm">Modifier</a>
-                                <form action="{{ route('sites.destroy', $site->id) }}" method="POST" onsubmit="return confirm('Confirmer la suppression ?')">
+                            <div class="action-buttons">
+                                <a href="{{ route('sites.edit', $site->id) }}" class="modern-btn btn-edit">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <form action="{{ route('sites.destroy', $site->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce site ?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                    <button type="submit" class="modern-btn btn-delete">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
                                 </form>
                             </div>
                             @endif
