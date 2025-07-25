@@ -19,13 +19,6 @@ use Illuminate\Support\Facades\Response;
 class BonController extends Controller
 {
 
-public function testPdf()
-{
-    $pdf = PDF::loadHTML('<h1>Bonjour PDF</h1>');
-    return $pdf->download('test.pdf');
-}
-
-
    public function __construct()
      {
         $this->middleware('auth');
@@ -71,14 +64,13 @@ public function store(Request $request)
         'quantite' => 'required|integer|min:1',
         'prix' => 'required|numeric|min:0',
         'date_bon' => 'required|date',
-        'date_saisie' => 'required|date',
     ]);
 
     // Calcul du total
+    $validated['date_saisie'] = now();
     $validated['total'] = $validated['quantite'] * $validated['prix'];
     $validated['utilisateur_id'] = auth()->id();
-
-    Bon::create($validated);
+    $bon = Bon::create($validated);
 
     return redirect()->route('bons.index')->with('success', 'Bon ajouté avec succès.');
 }
@@ -111,10 +103,10 @@ public function update(Request $request, $id)
         'quantite' => 'required|integer|min:1',
         'prix' => 'required|numeric|min:0',
         'date_bon' => 'required|date',
-        'date_saisie' => 'required|date',
     ]);
 
     // Calcul du total
+    $validated['date_saisie'] = now();
     $validated['total'] = $validated['quantite'] * $validated['prix'];
     $validated['utilisateur_id'] = auth()->id();
 

@@ -41,12 +41,20 @@
                                        required>
                             </div>
 
-                            <div class="col-md-4 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-search me-2"></i>
-                                    Afficher les résultats
-                                </button>
+                          <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-search me-2"></i>
+                                        Afficher les résultats
+                                    </button>
+                                    <a href="/bons" class="btn btn-secondary btn-lg">
+                                        <i class="fas fa-arrow-left me-2"></i>
+                                        Retour
+                                    </a>
+                                </div>
                             </div>
+                        </div>
                         </div>
                     </form>
                 </div>

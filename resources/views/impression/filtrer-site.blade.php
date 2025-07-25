@@ -64,7 +64,7 @@
                                         <i class="fas fa-search me-2"></i>
                                         Afficher la consommation
                                     </button>
-                                    <a href="{{ route('dashboard') }}" class="btn btn-secondary btn-lg">
+                                    <a href="/bons" class="btn btn-secondary btn-lg">
                                         <i class="fas fa-arrow-left me-2"></i>
                                         Retour
                                     </a>

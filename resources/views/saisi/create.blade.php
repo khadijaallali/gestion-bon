@@ -88,14 +88,10 @@
             </div>
         </div>
 
-        <div class="row mb-3">
-            <div class="col">
+        <div class="mb-3">
+            <div>
                 <label for="date_bon" class="form-label">Date du Bon</label>
-                <input type="date" class="form-control" name="date_bon" required>
-            </div>
-            <div class="col">
-                <label for="date_saisie" class="form-label">Date de Saisie</label>
-                <input type="date" class="form-control" name="date_saisie" required>
+                <input type="date" class="form-control" name="date_bon" required style="max-width: 200px;">
             </div>
         </div>
 
