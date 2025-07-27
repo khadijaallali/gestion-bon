@@ -68,7 +68,9 @@
                             <th>Type Carburant</th>
                             <th>Site</th>
                             <th>Service</th>
-                            <th>Véhicule</th>
+                            <th>Marque</th>
+                            <th>Modèle</th>
+                            <th>N° Véhicule</th>
                             <th>Preneur</th>
                             <th>Date Bon</th>
                             <th>Date Saisie</th>
@@ -84,6 +86,8 @@
                                 <td>{{ $b->type_carburant }}</td>
                                 <td>{{ $b->site->nom_site ?? '' }}</td>
                                 <td>{{ $b->service->nom_service ?? '' }}</td>
+                                <td>{{ $b->vehicule->marque ?? '' }}</td>
+                                <td>{{ $b->vehicule->modele ?? '' }}</td>
                                 <td>{{ $b->vehicule->n_vehicule ?? '' }}</td>
                                 <td>{{ $b->preneur->nom ?? '' }}</td>
                                 <td>{{ $b->date_bon }}</td>

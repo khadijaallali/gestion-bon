@@ -48,6 +48,10 @@
                     <i class="fas fa-calculator"></i>
                     <span>Total : <strong class="summary-total">{{ number_format($bons->sum('total'), 2) }} DH</strong></span>
                 </div>
+                 <div class="summary-item">
+                    <i class="fas fa-gas-pump"></i>
+                    <span>Quantité : <strong class="summary-quantity">{{ $bons->sum('quantite') }} L</strong></span>
+                </div>
             </div>
 
             <div class="table-responsive">
@@ -61,7 +65,9 @@
                             <th>Type Carburant</th>
                             <th>Site</th>
                             <th>Service</th>
-                            <th>Véhicule</th>
+                            <th>Marque</th>
+                            <th>Modèle</th>
+                            <th>N° Véhicule</th>
                             <th>Preneur</th>
                             <th>Date Bon</th>
                             <th>Date Saisie</th>
@@ -77,6 +83,8 @@
                                 <td>{{ $bon->type_carburant }}</td>
                                 <td>{{ $bon->site->nom_site ?? '' }}</td>
                                 <td>{{ $bon->service->nom_service ?? '' }}</td>
+                                <td>{{ $bon->vehicule->marque ?? '' }}</td>
+                                <td>{{ $bon->vehicule->modele ?? '' }}</td>
                                 <td>{{ $bon->vehicule->n_vehicule ?? '' }}</td>
                                 <td>{{ $bon->preneur->nom ?? '' }}</td>
                                 <td>{{ $bon->date_bon }}</td>

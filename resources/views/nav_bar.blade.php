@@ -357,6 +357,8 @@
                 <i class="fas fa-plus-circle"></i> Ajouter un bon
             </a>
         </li>
+                @if(auth()->check() && auth()->user()->role === 'admin')
+
         <li class="nav-item dropdown">
             <a class="nav-link-modern dropdown-toggle no-print" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
                 <i class="fas fa-search"></i> Rechercher
@@ -396,6 +398,7 @@
                 </a></li>
             </ul>
         </li>
+        @endif
     </ul>
 
     <!-- Partie profil utilisateur -->
