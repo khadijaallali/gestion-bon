@@ -440,70 +440,35 @@
                 <i class="fas fa-home"></i> Accueil
             </a>
         </li>
+        
         <li class="sidebar-item">
-            <a class="sidebar-link" data-bs-toggle="collapse" href="#sitesMenu" role="button" aria-expanded="false">
-                <i class="fas fa-map-marker-alt"></i> Sites <i class="fas fa-chevron-down ms-auto"></i>
+            <a class="sidebar-link" href="/sites">
+                <i class="fas fa-map-marker-alt"></i> Sites 
             </a>
-            <div class="collapse sidebar-dropdown" id="sitesMenu">
-                <a class="sidebar-dropdown-item" href="/sites/create">
-                    <i class="fas fa-plus"></i> Ajouter site
-                </a>
-                <a class="sidebar-dropdown-item" href="/sites">
-                    <i class="fas fa-list"></i> Gérer sites
-                </a>
-            </div>
+           
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" data-bs-toggle="collapse" href="#servicesMenu" role="button" aria-expanded="false">
-                <i class="fas fa-briefcase"></i> Services <i class="fas fa-chevron-down ms-auto"></i>
+            <a class="sidebar-link" href="/services" >
+                <i class="fas fa-briefcase"></i> Services 
             </a>
-            <div class="collapse sidebar-dropdown" id="servicesMenu">
-                <a class="sidebar-dropdown-item" href="/services/create">
-                    <i class="fas fa-plus"></i> Ajouter service
-                </a>
-                <a class="sidebar-dropdown-item" href="/services">
-                    <i class="fas fa-list"></i> Gérer services
-                </a>
-            </div>
+            
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" data-bs-toggle="collapse" href="#vehiculesMenu" role="button" aria-expanded="false">
-                <i class="fas fa-car"></i> Véhicules <i class="fas fa-chevron-down ms-auto"></i>
-            </a>
-            <div class="collapse sidebar-dropdown" id="vehiculesMenu">
-                <a class="sidebar-dropdown-item" href="/vehicules/create">
-                    <i class="fas fa-plus"></i> Ajouter véhicule
-                </a>
-                <a class="sidebar-dropdown-item" href="/vehicules">
-                    <i class="fas fa-list"></i> Gérer véhicules
-                </a>
-            </div>
+            <a class="sidebar-link" href="/vehicules">
+                <i class="fas fa-car"></i> Véhicules 
+</a>
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" data-bs-toggle="collapse" href="#preneursMenu" role="button" aria-expanded="false">
-                <i class="fas fa-users"></i> Preneurs <i class="fas fa-chevron-down ms-auto"></i>
+            <a class="sidebar-link" href="/preneurs" >
+                <i class="fas fa-users"></i> Preneurs 
             </a>
-            <div class="collapse sidebar-dropdown" id="preneursMenu">
-                <a class="sidebar-dropdown-item" href="/preneurs/create">
-                    <i class="fas fa-plus"></i> Ajouter preneur
-                </a>
-                <a class="sidebar-dropdown-item" href="/preneurs">
-                    <i class="fas fa-list"></i> Gérer preneurs
-                </a>
-            </div>
+            
         </li>
         <li class="sidebar-item">
-            <a class="sidebar-link" data-bs-toggle="collapse" href="#usersMenu" role="button" aria-expanded="false">
-                <i class="fas fa-user-cog"></i> Utilisateurs <i class="fas fa-chevron-down ms-auto"></i>
+            <a class="sidebar-link"href="/users" >
+                <i class="fas fa-user-cog"></i> Utilisateurs 
             </a>
-            <div class="collapse sidebar-dropdown" id="usersMenu">
-                <a class="sidebar-dropdown-item" href="/users/create">
-                    <i class="fas fa-plus"></i> Ajouter utilisateur
-                </a>
-                <a class="sidebar-dropdown-item" href="/users">
-                    <i class="fas fa-list"></i> Gérer utilisateurs
-                </a>
-            </div>
+            
         </li>
     </ul>
     

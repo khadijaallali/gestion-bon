@@ -49,7 +49,12 @@
     </div>
     <hr>
     <h1>Récapitulatif par Véhicule</h1>
-        <p class="text-center">Période : {{ $date_debut }} au {{ $date_fin }}</p>
+    @if(isset($vehiculeSelectionne) && $vehiculeSelectionne)
+        <p class="text-center"><strong>Véhicule :</strong> {{ $vehiculeSelectionne->n_vehicule }} | {{ $vehiculeSelectionne->marque }} {{ $vehiculeSelectionne->modele }}</p>
+    @else
+        <p class="text-center"><strong>Véhicule :</strong> Tous les véhicules</p>
+    @endif
+    <p class="text-center">Période : {{ $date_debut }} au {{ $date_fin }}</p>
     <table>
         <thead>
             <tr>

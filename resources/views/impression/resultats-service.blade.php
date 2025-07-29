@@ -15,9 +15,20 @@
     @if($date_debut && $date_fin)
         <p class="text-center">Période : {{ $date_debut }} au {{ $date_fin }}</p>
     @endif
-    <a href="{{ route('impression.services.pdf', ['date_debut' => $date_debut, 'date_fin' => $date_fin]) }}" class="btn btn-primary text-center mb-3 my-2" target="_blank">
-    <i class="fas fa-print"></i> Imprimer
+    
+    {{-- Bouton pour imprimer le résultat --}}
+    <a href="{{ route('impression.services.pdf', [
+        'date_debut' => $date_debut,
+        'date_fin' => $date_fin,
+        'service_id' => $service_selectionne ? $service_selectionne->id : 'all'
+    ]) }}" 
+    class="btn btn-primary text-center mb-3 my-2" target="_blank">
+        <i class="fas fa-print"></i> Imprimer
     </a>
+
+    {{-- Affichage de la période sélectionnée --}}
+    <p><strong>Période :</strong> Du {{ $date_debut }} au {{ $date_fin }}</p>
+
 
     <table class="table table-bordered table-striped">
         <thead class="table-secondary text-center">
@@ -101,3 +112,4 @@
     }
 }
 </style>
+

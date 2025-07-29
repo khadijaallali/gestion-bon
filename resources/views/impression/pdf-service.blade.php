@@ -44,6 +44,11 @@
 </div>
 <hr>
 <h1>Récapitulatif par service</h1>
+@if(isset($service_selectionne) && $service_selectionne)
+    <p class="text-center"><strong>Service :</strong> {{ $service_selectionne->nom_service }}</p>
+@else
+    <p class="text-center"><strong>Service :</strong> Tous les services</p>
+@endif
 <p class="text-center">Période : {{ $date_debut }} au {{ $date_fin }}</p>
 <table>
     <thead>

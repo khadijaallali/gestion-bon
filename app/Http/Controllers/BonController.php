@@ -334,6 +334,12 @@ public function filtrerParSite()
     return view('impression.filtrer-site', compact('sites'));
 }
 
+public function filtrerParService()
+{
+    $services = Service::orderBy('nom_service')->get();
+    return view('impression.filtrer-service', compact('services'));
+}
+
 public function resultatParService(Request $request)
 {
     $query = Bon::query()->with('service');
@@ -427,57 +433,101 @@ public function resultatParService(Request $request)
         'service_selectionne' => $serviceSelectionne,
     ]);
 }
-
 public function exportServicePDF(Request $request)
 {
     $query = Bon::query()->with('service');
+
+    // Appliquer le filtre sur les dates
     if ($request->filled('date_debut')) {
         $query->whereDate('date_bon', '>=', $request->date_debut);
     }
     if ($request->filled('date_fin')) {
         $query->whereDate('date_bon', '<=', $request->date_fin);
     }
-    $bons = $query->get();
+
     $recap = [];
-    foreach ($bons as $bon) {
-        $serviceId = $bon->service_id;
-        $serviceName = $bon->service->nom_service ?? '';
-        $type = strtolower(trim($bon->type_carburant));
-        if (!isset($recap[$serviceId])) {
-            $recap[$serviceId] = [
-                'service' => $serviceName,
+    $serviceSelectionne = null;
+
+    // Si un service spécifique est sélectionné
+    if ($request->filled('service_id') && $request->service_id !== 'all') {
+        $query->where('service_id', $request->service_id);
+        $serviceSelectionne = Service::find($request->service_id);
+
+        if ($serviceSelectionne) {
+            $recap[$serviceSelectionne->id] = [
+                'service' => $serviceSelectionne->nom_service,
                 'essence_l' => 0,
                 'diesel_l' => 0,
                 'montant_essence' => 0,
                 'montant_diesel' => 0,
             ];
+
+            $bons = $query->get();
+            foreach ($bons as $bon) {
+                $type = strtolower(trim($bon->type_carburant));
+                if ($type === 'essence') {
+                    $recap[$serviceSelectionne->id]['essence_l'] += $bon->quantite;
+                    $recap[$serviceSelectionne->id]['montant_essence'] += $bon->total;
+                } elseif ($type === 'diesel') {
+                    $recap[$serviceSelectionne->id]['diesel_l'] += $bon->quantite;
+                    $recap[$serviceSelectionne->id]['montant_diesel'] += $bon->total;
+                }
+            }
+
+            $recap[$serviceSelectionne->id]['montant_total'] =
+                $recap[$serviceSelectionne->id]['montant_essence'] +
+                $recap[$serviceSelectionne->id]['montant_diesel'];
         }
-        if ($type === 'essence') {
-            $recap[$serviceId]['essence_l'] += $bon->quantite;
-            $recap[$serviceId]['montant_essence'] += $bon->total;
-        } elseif ($type === 'diesel') {
-            $recap[$serviceId]['diesel_l'] += $bon->quantite;
-            $recap[$serviceId]['montant_diesel'] += $bon->total;
+
+    } else {
+        // Sinon, tous les services
+        $bons = $query->get();
+
+        foreach ($bons as $bon) {
+            $serviceId = $bon->service_id;
+            $serviceName = $bon->service->nom_service ?? 'Service inconnu';
+            $type = strtolower(trim($bon->type_carburant));
+
+            if (!isset($recap[$serviceId])) {
+                $recap[$serviceId] = [
+                    'service' => $serviceName,
+                    'essence_l' => 0,
+                    'diesel_l' => 0,
+                    'montant_essence' => 0,
+                    'montant_diesel' => 0,
+                ];
+            }
+
+            if ($type === 'essence') {
+                $recap[$serviceId]['essence_l'] += $bon->quantite;
+                $recap[$serviceId]['montant_essence'] += $bon->total;
+            } elseif ($type === 'diesel') {
+                $recap[$serviceId]['diesel_l'] += $bon->quantite;
+                $recap[$serviceId]['montant_diesel'] += $bon->total;
+            }
+        }
+
+        // Calcul du montant total pour chaque service
+        foreach ($recap as &$data) {
+            $data['montant_total'] = $data['montant_essence'] + $data['montant_diesel'];
         }
     }
-    foreach ($recap as &$row) {
-        $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
-    }
+
+    // Génération du PDF
     $pdf = PDF::loadView('impression.pdf-service', [
         'recap' => $recap,
         'date_debut' => $request->date_debut,
         'date_fin' => $request->date_fin,
+        'service_selectionne' => $serviceSelectionne,
         'print_mode' => true,
     ])->setPaper('A4', 'landscape');
+
     return $pdf->download('rapport_services.pdf');
 }
 
 
-public function filtrerParService()
-{
-    $services = Service::orderBy('nom_service')->get();
-    return view('impression.filtrer-service', compact('services'));
-}
+
+
 
 public function filtrerParPeriode()
 {
@@ -680,48 +730,44 @@ public function TablePrintVehicule(Request $request)
         $query->whereDate('date_bon', '<=', $request->date_fin);
     }
 
-    // Nouveau filtre par véhicule spécifique
+    $vehicule_selectionne = null;
     if ($request->filled('vehicule_id') && $request->vehicule_id != 'all') {
-        $query->where('vehicule_id', $request->vehicule_id);
+        $vehicule_selectionne = \App\Models\Vehicule::find($request->vehicule_id);
+        $query->where('vehicule_id', $request->vehicule_id); // <-- il faut filtrer ici aussi
     }
 
-    $bons = $query->get();
+    $bons = $query->get(); // <-- toujours AVANT d'utiliser $bons
 
     $recap = [];
-
-    // Si un véhicule spécifique est sélectionné, calculer seulement pour ce véhicule
-    if ($request->filled('vehicule_id') && $request->vehicule_id != 'all') {
-        $vehiculeSelectionne = \App\Models\Vehicule::find($request->vehicule_id);
-        if ($vehiculeSelectionne && $bons->isNotEmpty()) {
-            foreach ($bons as $bon) {
-                if (!$bon->vehicule || !$bon->preneur) continue;
-                $vehicule = $bon->vehicule;
-                $preneur = $bon->preneur;
-                $cle = $vehicule->id . '_' . $preneur->id;
-                $type = strtolower(trim($bon->type_carburant));
-                if (!isset($recap[$cle])) {
-                    $recap[$cle] = [
-                        'numero' => $vehicule->n_vehicule ?? '',
-                        'marque' => $vehicule->marque ?? '',
-                        'modele' => $vehicule->modele ?? '',
-                        'preneur' => $preneur->nom ?? 'Inconnu',
-                        'essence_l' => 0,
-                        'diesel_l' => 0,
-                        'montant_essence' => 0,
-                        'montant_diesel' => 0,
-                    ];
-                }
-                if ($type === 'essence') {
-                    $recap[$cle]['essence_l'] += $bon->quantite;
-                    $recap[$cle]['montant_essence'] += $bon->total;
-                } elseif ($type === 'diesel') {
-                    $recap[$cle]['diesel_l'] += $bon->quantite;
-                    $recap[$cle]['montant_diesel'] += $bon->total;
-                }
+    if ($vehicule_selectionne && $bons->isNotEmpty()) {
+        foreach ($bons as $bon) {
+            if (!$bon->vehicule || !$bon->preneur) continue;
+            $vehicule = $bon->vehicule;
+            $preneur = $bon->preneur;
+            $cle = $vehicule->id . '_' . $preneur->id;
+            $type = strtolower(trim($bon->type_carburant));
+            if (!isset($recap[$cle])) {
+                $recap[$cle] = [
+                    'numero' => $vehicule->n_vehicule ?? '',
+                    'marque' => $vehicule->marque ?? '',
+                    'modele' => $vehicule->modele ?? '',
+                    'preneur' => $preneur->nom ?? 'Inconnu',
+                    'essence_l' => 0,
+                    'diesel_l' => 0,
+                    'montant_essence' => 0,
+                    'montant_diesel' => 0,
+                ];
             }
-            foreach ($recap as &$row) {
-                $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
+            if ($type === 'essence') {
+                $recap[$cle]['essence_l'] += $bon->quantite;
+                $recap[$cle]['montant_essence'] += $bon->total;
+            } elseif ($type === 'diesel') {
+                $recap[$cle]['diesel_l'] += $bon->quantite;
+                $recap[$cle]['montant_diesel'] += $bon->total;
             }
+        }
+        foreach ($recap as &$row) {
+            $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
         }
     } else {
         // Si "Tous les véhicules" est sélectionné, afficher tous les véhicules
@@ -760,15 +806,16 @@ public function TablePrintVehicule(Request $request)
         'recap' => $recap,
         'date_debut' => $request->date_debut,
         'date_fin' => $request->date_fin,
+        'vehicule_selectionne' => $vehicule_selectionne,
         'print_mode' => false, 
     ]);
 }
-
 
 public function exportVehiculePDF(Request $request)
 {
     $query = Bon::query()->with(['vehicule', 'preneur']);
 
+    // Appliquer le filtre sur les dates
     if ($request->filled('date_debut')) {
         $query->whereDate('date_bon', '>=', $request->date_debut);
     }
@@ -776,53 +823,88 @@ public function exportVehiculePDF(Request $request)
         $query->whereDate('date_bon', '<=', $request->date_fin);
     }
 
+    $vehiculeSelectionne = null;
+    if ($request->filled('vehicule_id') && $request->vehicule_id != 'all') {
+        $vehiculeSelectionne = \App\Models\Vehicule::find($request->vehicule_id);
+        $query->where('vehicule_id', $request->vehicule_id);
+    }
+
     $bons = $query->get();
-
     $recap = [];
-    foreach ($bons as $bon) {
-        if (!$bon->vehicule || !$bon->preneur) continue;
 
-        $vehicule = $bon->vehicule;
-        $preneur = $bon->preneur;
-
-        $cle = $vehicule->id . '_' . $preneur->id;
-        $type = strtolower(trim($bon->type_carburant));
-
-        if (!isset($recap[$cle])) {
-            $recap[$cle] = [
-                'numero' => $vehicule->n_vehicule ?? '',
-                'marque' => $vehicule->marque ?? '',
-                'modele' => $vehicule->modele ?? '',
-                'preneur' => $preneur->nom ?? 'Inconnu',
-                'essence_l' => 0,
-                'diesel_l' => 0,
-                'montant_essence' => 0,
-                'montant_diesel' => 0,
-            ];
+    if ($vehiculeSelectionne && $bons->isNotEmpty()) {
+        foreach ($bons as $bon) {
+            if (!$bon->vehicule || !$bon->preneur) continue;
+            $vehicule = $bon->vehicule;
+            $preneur = $bon->preneur;
+            $cle = $vehicule->id . '_' . $preneur->id;
+            $type = strtolower(trim($bon->type_carburant));
+            if (!isset($recap[$cle])) {
+                $recap[$cle] = [
+                    'numero' => $vehicule->n_vehicule ?? '',
+                    'marque' => $vehicule->marque ?? '',
+                    'modele' => $vehicule->modele ?? '',
+                    'preneur' => $preneur->nom ?? 'Inconnu',
+                    'essence_l' => 0,
+                    'diesel_l' => 0,
+                    'montant_essence' => 0,
+                    'montant_diesel' => 0,
+                ];
+            }
+            if ($type === 'essence') {
+                $recap[$cle]['essence_l'] += $bon->quantite;
+                $recap[$cle]['montant_essence'] += $bon->total;
+            } elseif ($type === 'diesel') {
+                $recap[$cle]['diesel_l'] += $bon->quantite;
+                $recap[$cle]['montant_diesel'] += $bon->total;
+            }
         }
-
-        if ($type === 'essence') {
-            $recap[$cle]['essence_l'] += $bon->quantite;
-            $recap[$cle]['montant_essence'] += $bon->total;
-        } elseif ($type === 'diesel') {
-            $recap[$cle]['diesel_l'] += $bon->quantite;
-            $recap[$cle]['montant_diesel'] += $bon->total;
+        foreach ($recap as &$row) {
+            $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
+        }
+    } else {
+        foreach ($bons as $bon) {
+            if (!$bon->vehicule || !$bon->preneur) continue;
+            $vehicule = $bon->vehicule;
+            $preneur = $bon->preneur;
+            $cle = $vehicule->id . '_' . $preneur->id;
+            $type = strtolower(trim($bon->type_carburant));
+            if (!isset($recap[$cle])) {
+                $recap[$cle] = [
+                    'numero' => $vehicule->n_vehicule ?? '',
+                    'marque' => $vehicule->marque ?? '',
+                    'modele' => $vehicule->modele ?? '',
+                    'preneur' => $preneur->nom ?? 'Inconnu',
+                    'essence_l' => 0,
+                    'diesel_l' => 0,
+                    'montant_essence' => 0,
+                    'montant_diesel' => 0,
+                ];
+            }
+            if ($type === 'essence') {
+                $recap[$cle]['essence_l'] += $bon->quantite;
+                $recap[$cle]['montant_essence'] += $bon->total;
+            } elseif ($type === 'diesel') {
+                $recap[$cle]['diesel_l'] += $bon->quantite;
+                $recap[$cle]['montant_diesel'] += $bon->total;
+            }
+        }
+        foreach ($recap as &$row) {
+            $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
         }
     }
 
-    foreach ($recap as &$row) {
-        $row['montant_total'] = $row['montant_essence'] + $row['montant_diesel'];
-    }
-
-   $pdf = PDF::loadView('impression.pdf-vehicules', [
+    $pdf = PDF::loadView('impression.pdf-vehicules', [
         'recap' => $recap,
         'date_debut' => $request->date_debut,
         'date_fin' => $request->date_fin,
-        'print_mode' => true, 
+        'vehiculeSelectionne' => $vehiculeSelectionne,
+        'print_mode' => true,
     ])->setPaper('A4', 'landscape');
 
     return $pdf->download('rapport_vehicules.pdf');
 }
+
 
 
 public function filtrerParVehicule()
